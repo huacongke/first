@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">first</string>
+    <string name="inp_hint">输入姓名</string>
+    <string name="inp_hint2">输入学号</string>
+</resources>

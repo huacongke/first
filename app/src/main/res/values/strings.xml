@@ -2,7 +2,7 @@
     <string name="app_name">first</string>
     <string name="inp_hint">请输入华氏度</string>
     <string name="inp_hint2">input \n your \n id</string>
-    <string name="inp_tem" >click to translate</string>
+    <string name="inp_tem">click to translate</string>
     <string name="height">please input height(m)</string>
     <string name="weight">please input weight(kg)</string>
     <string name="calculate">Click to calculate</string>

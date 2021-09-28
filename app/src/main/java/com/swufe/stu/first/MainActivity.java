@@ -4,8 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,10 +20,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements  Runnable{
 
     private static final String TAG = "wwww";
     int score,score1,score2;
@@ -27,13 +39,36 @@ public class MainActivity extends AppCompatActivity {
     double euroRate=0.1324;
     double wonRate=182.69;
 
-
+    Handler handler;//全局变量
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.money);
 
+        //从xml文件中读取数据
+        SharedPreferences sharedPreferences=getSharedPreferences("myrate",Activity.MODE_PRIVATE);
+        dollarRate=(double) sharedPreferences.getFloat("d_rate",0.1f);
+        euroRate=(double) sharedPreferences.getFloat("e_rate",0.2f);
+        wonRate=(double) sharedPreferences.getFloat("w_rate",0.3f);
+
+        handler=new Handler(Looper.myLooper()){
+            //接收消息
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+
+                //接收消息
+                if(msg.what==6){
+                    Log.i(TAG, "handleMessage: 消息收到");
+                    String str=(String) msg.obj;
+                    Log.i(TAG, "handleMessage: str="+str);
+                }
+                super.handleMessage(msg);
+            }
+        };
+        //开启线程
+        Thread t=new Thread(this);
+        t.start();
 
 //        output.setText("time"+java.time.LocalTime.now());
         Log.i(TAG, "onCreate: 开始运行了");
@@ -241,15 +276,26 @@ public class MainActivity extends AppCompatActivity {
     //从跳转过去的页面接收数据
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
         if(requestCode==1&&resultCode==3){
             dollarRate=data.getDoubleExtra("new_dollar",0.1);
             euroRate=data.getDoubleExtra("new_euro",0.1);
             wonRate=data.getDoubleExtra("new_won",0.1);
+
+            //保存数据到xml文件
+            SharedPreferences sp=getSharedPreferences("myrate",Activity.MODE_PRIVATE);
+            SharedPreferences.Editor editor=sp.edit();
+            editor.putFloat("d_rate",(float) dollarRate);
+            editor.putFloat("e_rate",(float) euroRate);
+            editor.putFloat("w_rate",(float) wonRate);
+            editor.apply();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    //设置菜单
+
+
+    //设置菜单，在当前页面启用菜单
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.mymenu,menu);
@@ -257,7 +303,7 @@ public class MainActivity extends AppCompatActivity {
         return true;//当前有菜单项
     }
 
-    //点击菜单可跳转
+    //点击菜单可跳转到指定页面
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId()==R.id.menu_setting){
@@ -265,4 +311,55 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void run() {
+        try {
+            Thread.sleep(3000);
+        }catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Log.i(TAG, "run: run()");
+
+        //获取网络数据
+        URL url=null;
+        try {
+            url=new URL("https://www.usd-cny.com/bankofchina.htm");
+            HttpURLConnection http=(HttpURLConnection) url.openConnection();
+            InputStream in=http.getInputStream();
+            String html=inputStream2String(in);
+            Log.i(TAG, "run: html="+html);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //发送消息给主线程
+        Message msg=handler.obtainMessage();
+        msg.what=6;
+        msg.obj="Hello from run";
+
+        handler.sendMessage(msg);
+
+        Log.i(TAG, "run: 消息已发送");
+    }
+
+    private String inputStream2String(InputStream inputStream)
+        throws IOException {
+        final int buffersize = 1024;
+        final char[] buffer=new char[buffersize];
+        final  StringBuilder out=new StringBuilder();
+        Reader in=new InputStreamReader(inputStream,"gb2312");
+        while (true){
+            int rsz=in.read(buffer,0,buffer.length);
+            if(rsz<0)
+                break;
+            out.append(buffer,0,rsz);
+
+        }
+        return out.toString();
+
+    }
+
 }

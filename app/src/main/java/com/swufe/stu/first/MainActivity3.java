@@ -2,7 +2,9 @@ package com.swufe.stu.first;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -36,6 +38,7 @@ public class MainActivity3 extends AppCompatActivity {
 
 
 
+
     }
     public void getRate(View btn){
         dollar_input=findViewById(R.id.editTextDollar);
@@ -44,6 +47,15 @@ public class MainActivity3 extends AppCompatActivity {
         dollar2=Double.parseDouble(dollar_input.getText().toString());
         euro2=Double.parseDouble(euro_input.getText().toString());
         won2=Double.parseDouble(won_input.getText().toString());
+
+//        //将修改的数据存入xml文件中
+//        SharedPreferences sp=getSharedPreferences("myrate", Activity.MODE_PRIVATE);
+//        SharedPreferences.Editor editor=sp.edit();
+//        editor.putFloat("d_rate",(float) dollar2);
+//        editor.putFloat("e_rate",(float) euro2);
+//        editor.putFloat("w_rate",(float) won2);
+//        editor.apply();
+
 
         //带着数据回到之前窗口
         Intent intent1=getIntent();

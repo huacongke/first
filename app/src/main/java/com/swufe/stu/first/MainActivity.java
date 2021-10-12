@@ -34,6 +34,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 // implements  Runnable
@@ -51,10 +53,16 @@ public class MainActivity extends AppCompatActivity  implements  Runnable{
     Handler handler;//全局变量
     Bundle bundle;
 
+
+    public void setHandler(Handler handler) {
+        this.handler = handler;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.money);
+        List<String> list1=new ArrayList<String>();
 
         //从xml文件中读取数据
         SharedPreferences sharedPreferences=getSharedPreferences("myrate",Activity.MODE_PRIVATE);
@@ -106,6 +114,9 @@ public class MainActivity extends AppCompatActivity  implements  Runnable{
             }
         };
         //开启线程
+//        MyThrea td=new MyThrea();
+//        td.setHandler(handler);
+        //Thread t=new Thread();
         Thread t=new Thread(this);
         t.start();
 
@@ -423,31 +434,6 @@ public class MainActivity extends AppCompatActivity  implements  Runnable{
                     }
                 }
 
-                //获取td中的内容
-//            Elements tds=table1.getElementsByTag("td");
-//
-//            for(int i=0;i< tds.size();i+=6){
-//                Element td1=tds.get(i);
-//                Element td2=tds.get(i+5);
-//                String str1=td1.text();
-//                String val=td2.text();
-//                if(str1=="美元"){
-//                    d_rate_hs =val;
-//                    double d_rate_h=100f/Double.parseDouble(val);
-//                }
-//                if(str1=="欧元"){
-//                    e_rate_hs=val;
-//                    Double e_rate_h=100f/Double.parseDouble(val);
-//                }
-//                if(str1=="韩元"){
-//                    w_rate_hs=val;
-//                    Double w_rate_h=100f/Double.parseDouble(val);
-//                }
-//
-//                Log.i(TAG, "run: "+str1+"==>"+val);
-//                float temp=Float.parseFloat(val);
-//                float v=100f/temp;
-//            }
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -542,31 +528,6 @@ public class MainActivity extends AppCompatActivity  implements  Runnable{
                     }
                 }
 
-                //获取td中的内容
-//            Elements tds=table1.getElementsByTag("td");
-//
-//            for(int i=0;i< tds.size();i+=6){
-//                Element td1=tds.get(i);
-//                Element td2=tds.get(i+5);
-//                String str1=td1.text();
-//                String val=td2.text();
-//                if(str1=="美元"){
-//                    d_rate_hs =val;
-//                    double d_rate_h=100f/Double.parseDouble(val);
-//                }
-//                if(str1=="欧元"){
-//                    e_rate_hs=val;
-//                    Double e_rate_h=100f/Double.parseDouble(val);
-//                }
-//                if(str1=="韩元"){
-//                    w_rate_hs=val;
-//                    Double w_rate_h=100f/Double.parseDouble(val);
-//                }
-//
-//                Log.i(TAG, "run: "+str1+"==>"+val);
-//                float temp=Float.parseFloat(val);
-//                float v=100f/temp;
-//            }
 
 
             } catch (MalformedURLException e) {
